@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="ClassConnect is a premium platform built for modern coaching institutes to manage attendance, tests, fees, and parent communication in one seamless hub.">
+  <meta name="keywords" content="coaching institute, class management, education platform, attendance tracking, fee management software, student portal">
+  <meta name="author" content="ClassConnect">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ClassConnect — The Premium Standard for Coaching">
+  <meta property="og:description" content="Manage attendance, tests, fees, and parent communication in one seamless hub.">
+
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+
+  <title>ClassConnect — The Premium Standard for Coaching</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+  <div id="cur"></div>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="page">
+
+    <!-- ═══ NAV ═══ -->
+    <nav>
+      <a href="#" class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+        <div class="logo-mark">
+          <img src="/assets/logo.svg" alt="ClassConnect Logo" width="40" height="40" style="display:block">
+        </div>
+        <div class="logo-wordmark">
+          <div class="logo-name">Class<span>Connect</span></div>
+        </div>
+      </a>
+      <div class="nav-mid">
+        <a href="#features">Features</a>
+        <a href="#how">How It Works</a>
+        <a href="#platform">Portals</a>
+        <a href="/solutions">Free Solutions</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="nav-cta">
+        <a href="#contact" class="btn-main" style="padding:10px 20px;font-size:.58rem">Request Demo →</a>
+        <div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" role="button" tabindex="0" aria-label="Toggle dark/light theme">
+          <button class="tt-btn" data-t="dark" onclick="setTheme('dark',event)" aria-label="Set dark mode">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+          <button class="tt-btn" data-t="light" onclick="setTheme('light',event)" aria-label="Set light mode">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          </button>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#platform">Portals</a>
+      <a href="/solutions">Free Solutions</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact" class="btn-main" style="margin-top:20px;text-align:center">Request Demo →</a>
+    </div>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="hero">
+      <div class="hero-glow-ring"></div>
+      <div class="ticker-wrap">
+        <div class="ticker">
+          <span>THE PREMIUM STANDARD FOR COACHING&nbsp;&nbsp;&nbsp;&nbsp;THE PREMIUM STANDARD FOR COACHING&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span>THE PREMIUM STANDARD FOR COACHING&nbsp;&nbsp;&nbsp;&nbsp;THE PREMIUM STANDARD FOR COACHING&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-kicker">
+            <span class="kicker-dot"></span>ClassConnect · Professional Coaching Operations · Mumbai Edition
+          </div>
+          <h1>
+            <span class="stroke">The Premium</span><br>
+            <span>Standard</span> <span class="accent">For</span><br>
+            <span class="lime">Coaching.</span>
+          </h1>
+          <p class="hero-sub">Stop juggling spreadsheets. Start managing your institute with the clarity, speed, and precision that modern educators demand.</p>
+          <div class="hero-cta" style="margin-top:36px">
+            <a href="#contact" class="btn-main">Request Your Demo →</a>
+            <a href="#features" class="btn-out">Explore Features</a>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="hero-award-badge">
+            <span class="badge-icon">🏆</span>
+            <span class="badge-text">Award-Winning Platform</span>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-label">Scroll to explore</div>
+    </section>
+
+    <!-- ═══ MARQUEE ═══ -->
+    <div class="marquee-section">
+      <div class="marquee-track">
+        <div class="mq-item"><div class="mq-num">🏆</div><div class="mq-label">Award<br>Winning</div></div>
+        <div class="mq-item"><div class="mq-num">500+</div><div class="mq-label">Students<br>Managed</div></div>
+        <div class="mq-item"><div class="mq-num">24/7</div><div class="mq-label">Parent<br>Visibility</div></div>
+        <div class="mq-item"><div class="mq-num">100%</div><div class="mq-label">Fee<br>Transparency</div></div>
+        <div class="mq-item"><div class="mq-num">Live</div><div class="mq-label">Real-Time<br>Analytics</div></div>
+        <div class="mq-item"><div class="mq-num">3×</div><div class="mq-label">Faster<br>Admin Work</div></div>
+        <div class="mq-item"><div class="mq-num">₹0</div><div class="mq-label">Hidden<br>Charges</div></div>
+        <div class="mq-item"><div class="mq-num">Secure</div><div class="mq-label">Data &amp;<br>Backups</div></div>
+        <!-- duplicates for infinite scroll -->
+        <div class="mq-item"><div class="mq-num">🏆</div><div class="mq-label">Award<br>Winning</div></div>
+        <div class="mq-item"><div class="mq-num">500+</div><div class="mq-label">Students<br>Managed</div></div>
+        <div class="mq-item"><div class="mq-num">24/7</div><div class="mq-label">Parent<br>Visibility</div></div>
+        <div class="mq-item"><div class="mq-num">100%</div><div class="mq-label">Fee<br>Transparency</div></div>
+        <div class="mq-item"><div class="mq-num">Live</div><div class="mq-label">Real-Time<br>Analytics</div></div>
+        <div class="mq-item"><div class="mq-num">3×</div><div class="mq-label">Faster<br>Admin Work</div></div>
+        <div class="mq-item"><div class="mq-num">₹0</div><div class="mq-label">Hidden<br>Charges</div></div>
+        <div class="mq-item"><div class="mq-num">Secure</div><div class="mq-label">Data &amp;<br>Backups</div></div>
+      </div>
+    </div>
+
+    <!-- ═══ TRUSTED BY ═══ -->
+    <section class="customers-section">
+      <div class="customers-label">Trusted by leading institutes</div>
+      <div class="customers-logos">
+        <a href="https://tuitionhub.vercel.app" target="_blank" rel="noopener" style="text-decoration:none">
+          <div class="trusted-badge">
+            <img src="/assets/tuitionhub-logo.ico" alt="TuitionHub">
+            <div class="trusted-info">
+              <span class="trusted-name">TuitionHub</span>
+              <span class="trusted-type">Education Center</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══ THE PROBLEM / SOLUTION ═══ -->
+    <section class="base-section problem-section">
+      <div class="base-bg-text">PROBLEM</div>
+      <div class="base-glow"></div>
+      <div class="base-content" style="max-width:800px;margin:0 auto">
+        <div class="section-number">01 — The Old Way</div>
+        <h2 class="base-title" style="font-size:clamp(2.5rem, 6vw, 6rem)">
+          <span class="stroke">Exhausting &</span><br>
+          <span class="purple">Scattered</span>
+        </h2>
+        <p class="base-sub">Scattered spreadsheets, endless WhatsApp messages, chasing down fee payments manually, and compiling test results by hand. It's draining your energy and limiting your growth.</p>
+        
+        <div style="margin:80px 0"></div>
+
+        <div class="section-number">02 — The New Standard</div>
+        <h2 class="base-title" style="font-size:clamp(2.5rem, 6vw, 6rem)">
+          <span class="stroke">Unified &</span><br>
+          <span class="lime">Intelligent</span>
+        </h2>
+        <p class="base-sub">A unified operating system built specifically for modern educators who want to focus on teaching, not administration.</p>
+      </div>
+    </section>
+
+    <!-- ═══ FEATURES ═══ -->
+    <section class="base-section features-section" id="features">
+      <div class="base-bg-text">FEATURES</div>
+      <div class="base-glow"></div>
+      <div class="base-content">
+        <div class="section-number">03 — Core Arsenal</div>
+        <h2 class="base-title">
+          <span class="stroke">Total</span><br>
+          <span class="purple">Control</span>
+        </h2>
+        <p class="base-sub">ClassConnect replaces manual follow-ups with one authoritative system — built for institutes that refuse to settle for average.</p>
+        
+        <div class="features-grid" style="max-width:1400px;margin:0 auto;text-align:left">
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(124,58,237,.1)">📊</div>
+            <div class="feat-name">Smart Dashboard</div>
+            <div class="feat-desc">Centralized control. See your entire batch performance, fee status, and scheduling at a single commanding glance.</div>
+            <div class="feat-accent-line" style="background:linear-gradient(90deg,var(--purple),transparent)"></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(189,224,69,.1)">📝</div>
+            <div class="feat-name">Test Management</div>
+            <div class="feat-desc">High-fidelity results. Publish scores instantly and track progress trends with surgical accuracy.</div>
+            <div class="feat-accent-line" style="background:linear-gradient(90deg,var(--lime),transparent)"></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(124,58,237,.1)">📅</div>
+            <div class="feat-name">Attendance Tracking</div>
+            <div class="feat-desc">Zero-miss attendance. Automated logs that keep your operations lean, your data airtight, and parents informed in real time.</div>
+            <div class="feat-accent-line" style="background:linear-gradient(90deg,var(--purple),transparent)"></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(189,224,69,.1)">💰</div>
+            <div class="feat-name">Fee Management</div>
+            <div class="feat-desc">Transparent finance. Automated reminders that protect your cash flow and keep parents informed without the friction.</div>
+            <div class="feat-accent-line" style="background:linear-gradient(90deg,var(--lime),transparent)"></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(124,58,237,.1)">📚</div>
+            <div class="feat-name">Study Materials</div>
+            <div class="feat-desc">Organized, accessible, instant. Upload subject-specific notes and assignments that students can reach from anywhere.</div>
+            <div class="feat-accent-line" style="background:linear-gradient(90deg,var(--purple),transparent)"></div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(189,224,69,.1)">🏆</div>
+            <div class="feat-name">Live Leaderboards</div>
+            <div class="feat-desc">Engineered competition. Live rankings and performance milestones that motivate students to consistently raise their game.</div>
+            <div class="feat-accent-line" style="background:linear-gradient(90deg,var(--lime),transparent)"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ HOW IT WORKS ═══ -->
+    <section class="base-section how-section" id="how">
+      <div class="base-bg-text">MINUTES</div>
+      <div class="base-glow"></div>
+      <div class="base-content">
+        <div class="section-number">04 — Deployment</div>
+        <h2 class="base-title">
+          <span class="stroke">Live In</span><br>
+          <span class="lime">Minutes</span>
+        </h2>
+        <p class="base-sub">No complex setup. No IT team required. Four steps from onboarding to full operational control.</p>
+        
+        <div class="how-grid" style="max-width:1400px;margin:0 auto;text-align:left">
+          <div class="how-card">
+            <div class="how-step-num">01</div>
+            <div class="how-icon" style="background:rgba(124,58,237,.12)">🏫</div>
+            <div class="how-title">Onboard</div>
+            <div class="how-desc">Bulk-upload your students and institute structure. Define batches, subjects, and fee schedules in one session.</div>
+          </div>
+          <div class="how-card">
+            <div class="how-step-num">02</div>
+            <div class="how-icon" style="background:rgba(189,224,69,.12)">🔗</div>
+            <div class="how-title">Integrate</div>
+            <div class="how-desc">Sync your tests and attendance workflow. Students get clean dashboards. Parents get immediate visibility.</div>
+          </div>
+          <div class="how-card">
+            <div class="how-step-num">03</div>
+            <div class="how-icon" style="background:rgba(124,58,237,.12)">⚡</div>
+            <div class="how-title">Automate</div>
+            <div class="how-desc">Let the system handle reminders, notifications, and fee alerts. Your admin overhead drops to near zero.</div>
+          </div>
+          <div class="how-card">
+            <div class="how-step-num">04</div>
+            <div class="how-icon" style="background:rgba(189,224,69,.12)">📈</div>
+            <div class="how-title">Optimize</div>
+            <div class="how-desc">Make strategic decisions based on real-time data. Better insights. Higher student success rates.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PLATFORM PORTALS ═══ -->
+    <section class="base-section platform-section" id="platform">
+      <div class="base-bg-text">PORTALS</div>
+      <div class="base-glow"></div>
+      <div class="base-content">
+        <div class="section-number">05 — Platform Access</div>
+        <h2 class="base-title">
+          <span class="stroke">One Hub.</span><br>
+          <span class="purple">Every Role.</span>
+        </h2>
+        <p class="base-sub">Teachers command, students perform, parents stay informed. Three dedicated portals built for the people who matter most.</p>
+
+        <div class="platform-grid" style="max-width:1400px;margin:0 auto;text-align:left">
+          <div class="platform-card">
+            <div class="platform-card-glow"></div>
+            <div class="platform-role">For Teachers</div>
+            <span class="platform-icon">👩‍🏫</span>
+            <div class="platform-title">Teacher Portal</div>
+            <div class="platform-desc">Your complete classroom command centre. Everything from attendance to fee oversight — managed in one disciplined space.</div>
+            <div class="platform-features">
+              <div class="pf-item">Mark & track attendance daily</div>
+              <div class="pf-item">Create tests & publish results instantly</div>
+              <div class="pf-item">Upload study materials by subject</div>
+              <div class="pf-item">Monitor fee collection & dues</div>
+              <div class="pf-item">View performance analytics per student</div>
+            </div>
+            <a href="#contact" class="platform-cta btn-main">Get Teacher Access →</a>
+          </div>
+
+          <div class="platform-card">
+            <div class="platform-card-glow" style="background:radial-gradient(circle at 30% 30%, rgba(189,224,69,.1) 0%, transparent 60%)"></div>
+            <div class="platform-role" style="color:var(--lime-text)">For Students</div>
+            <span class="platform-icon">🎓</span>
+            <div class="platform-title">Student Portal</div>
+            <div class="platform-desc">A personal academic command centre. Scores, rank, leaderboard, materials — everything a high-performer needs.</div>
+            <div class="platform-features">
+              <div class="pf-item lime-dot">View test scores & live class rank</div>
+              <div class="pf-item lime-dot">Download study materials anytime</div>
+              <div class="pf-item lime-dot">Check attendance record & alerts</div>
+              <div class="pf-item lime-dot">Track fee payment history</div>
+              <div class="pf-item lime-dot">Live leaderboard — see where you stand</div>
+            </div>
+            <a href="#contact" class="platform-cta btn-lime">Get Student Access →</a>
+          </div>
+
+          <div class="platform-card">
+            <div class="platform-card-glow"></div>
+            <div class="platform-role">For Parents</div>
+            <span class="platform-icon">👨‍👩‍👦</span>
+            <div class="platform-title">Parent View</div>
+            <div class="platform-desc">Stay connected to your child's academic journey without the daily follow-ups. Full transparency, zero friction.</div>
+            <div class="platform-features">
+              <div class="pf-item">Real-time attendance notifications</div>
+              <div class="pf-item">Test result alerts via WhatsApp</div>
+              <div class="pf-item">Fee dues & payment reminders</div>
+              <div class="pf-item">Monthly performance summary</div>
+              <div class="pf-item">Direct message to teacher</div>
+            </div>
+            <a href="#contact" class="platform-cta btn-out" style="text-align:center">Access via Student Login →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TESTIMONIALS ═══ -->
+    <section class="base-section testimonials-section" id="testimonials">
+      <div class="base-bg-text">VOICES</div>
+      <div class="base-glow"></div>
+      <div class="base-content">
+        <div class="section-number">06 — Real Voices</div>
+        <h2 class="base-title">
+          <span class="stroke">Trusted By</span><br>
+          <span class="lime">Faculty</span>
+        </h2>
+        <p class="base-sub">Don't just take our word for it. See how ClassConnect is transforming educational operations for institutes across the country.</p>
+        
+        <div class="testimonials-grid" style="text-align:left">
+          <div class="testi-card">
+            <div class="testi-quote">"ClassConnect completely eliminated our manual fee tracking. We now spend our time actually focusing on students instead of spreadsheets."</div>
+            <div class="testi-author">
+              <div class="ta-avatar" style="background: var(--purple-mid)">RJ</div>
+              <div class="ta-info">
+                <div class="ta-name">Rajesh Joshi</div>
+                <div class="ta-role">Director, Pinnacle Coaching</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-quote">"The live leaderboards have gamified our test series. Our students are more engaged and competitive than ever before."</div>
+            <div class="testi-author">
+              <div class="ta-avatar" style="background: var(--lime-text); color: #000">AP</div>
+              <div class="ta-info">
+                <div class="ta-name">Anita Patel</div>
+                <div class="ta-role">Head of Academics, Excel Academy</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <div class="testi-quote">"Parents used to call us constantly asking for updates. Now they check the portal themselves. It's saved us hours every single week."</div>
+            <div class="testi-author">
+              <div class="ta-avatar" style="background: var(--purple)">SM</div>
+              <div class="ta-info">
+                <div class="ta-name">Sneha Mishra</div>
+                <div class="ta-role">Co-Founder, BrightMinds Academy</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TRUST STRIP ═══ -->
+    <section class="trust-section" style="padding:60px 48px; border-top:1px solid var(--border-dim); border-bottom:1px solid var(--border-dim); background:var(--bg-card)">
+      <div class="trust-inner">
+        <div class="trust-card">
+          <div class="trust-icon-wrap" style="background:rgba(245,200,66,.1)">🏆</div>
+          <div>
+            <div class="trust-title">Award-Winning</div>
+            <div class="trust-desc">Recognised with the Best Project Award for excellence in streamlining academic management operations.</div>
+          </div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon-wrap" style="background:rgba(124,58,237,.1)">⚡</div>
+          <div>
+            <div class="trust-title">Built for Speed</div>
+            <div class="trust-desc">Admin tasks that took hours now take minutes. Less friction means more time teaching.</div>
+          </div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-icon-wrap" style="background:rgba(189,224,69,.1)">🔒</div>
+          <div>
+            <div class="trust-title">Trusted Data</div>
+            <div class="trust-desc">Secure, backed-up, and always available. Your institute's data is protected and accessible exactly when you need it.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FAQ ═══ -->
+    <section class="base-section faq-section" id="faq">
+      <div class="base-bg-text">ANSWERS</div>
+      <div class="base-glow"></div>
+      <div class="base-content">
+        <div class="section-number">07 — FAQ</div>
+        <h2 class="base-title">
+          <span class="stroke">Got</span><br>
+          <span class="purple">Questions?</span>
+        </h2>
+        <p class="base-sub">Everything you need to know about getting started with ClassConnect.</p>
+
+        <div class="faq-list" style="text-align:left;max-width:800px;margin:56px auto 0">
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">How long does it take to set up ClassConnect?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><p>Most institutes are fully operational within 24-48 hours. We handle the bulk upload of your student data, batch structure, and fee schedules — so you can start using the platform right away.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">Is ClassConnect suitable for small coaching classes?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><p>Absolutely. Whether you manage 20 students or 2,000, ClassConnect scales to fit your institute. The platform is designed to eliminate admin overhead regardless of size.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">How do parents access the portal?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><p>Parents receive a unique login linked to their child's profile. They can view attendance, test scores, fee status, and performance analytics in real time — all from their phone or desktop.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">Is my institute's data secure?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><p>Yes. All data is encrypted, backed up daily, and hosted on secure cloud infrastructure. We follow industry best practices to ensure your information is always protected and available.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">What does pricing look like?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><p>We offer flexible plans tailored to your institute size and needs. Request a demo and our team will walk you through the options — there are zero hidden charges.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">Can teachers use it on their phones?<span class="faq-icon">+</span></button>
+            <div class="faq-a"><p>Yes. ClassConnect is fully responsive and works seamlessly on mobile, tablet, and desktop. Teachers can mark attendance, publish results, and manage their dashboard from anywhere.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CTA / CONTACT ═══ -->
+    <section class="base-section" id="contact">
+      <div class="base-bg-text">CLASSCONNECT</div>
+      <div class="base-glow"></div>
+      <div class="base-content">
+        <h2 class="base-title">
+          <span class="stroke">Ready to</span><br>
+          <span class="purple">Upgrade</span><br>
+          <span class="lime">Your Institute?</span>
+        </h2>
+        <p class="base-sub">Tell us about your institute and we will tailor a live demo around your batch size, subjects, and workflow.</p>
+
+        <div class="contact-grid" style="max-width:1000px;margin:48px auto 0;text-align:left">
+          <div class="contact-card">
+            <h3>Get in Touch</h3>
+            <p>Reach us directly or submit a request and we will respond within one business day with a personalised demo.</p>
+            <div class="contact-list">
+              <div>
+                <span>Phone / WhatsApp</span>
+                8451826909
+              </div>
+              <div>
+                <span>Email</span>
+                classconnectsupport@gmail.com
+              </div>
+              <div>
+                <span>Location</span>
+                Andheri East, Mumbai
+              </div>
+            </div>
+            <div class="contact-award">
+              <span class="contact-award-icon">🏆</span>
+              <div class="contact-award-text">
+                <strong>Award-Winning Platform</strong><br>
+                Best Project — Excellence in Academic Management
+              </div>
+            </div>
+          </div>
+
+          <form class="contact-card contact-form" id="contact-form" action="/api/contact" method="POST">
+            <div class="form-row">
+              <div>
+                <label for="name" class="sr-only">Full Name</label>
+                <input class="input" id="name" name="name" placeholder="Full Name" required>
+              </div>
+              <div>
+                <label for="phone" class="sr-only">Phone / WhatsApp</label>
+                <input class="input" id="phone" name="phone" placeholder="Phone / WhatsApp" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div>
+                <label for="email" class="sr-only">Email Address</label>
+                <input class="input" id="email" type="email" name="email" placeholder="Email Address" required>
+              </div>
+              <div>
+                <label for="institute" class="sr-only">Institute Name</label>
+                <input class="input" id="institute" name="institute" placeholder="Institute Name" required>
+              </div>
+            </div>
+            <button class="btn-main" type="submit" style="width:100%;padding:15px;font-size:.7rem">Request Your Demo →</button>
+            <div class="form-status" id="contact-status"></div>
+            <div class="form-note">By submitting, you agree to receive a call or email from ClassConnect. No spam, ever.</div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer>
+      <div class="f-logo">CLASSCONNECT</div>
+      <div class="f-meta">Andheri East · Mumbai · 8451826909 · 🏆 Award-Winning Platform</div>
+      <div class="f-links">
+        <a href="#features">Features</a>
+        <a href="#how">How It Works</a>
+        <a href="#platform">Portals</a>
+        <a href="/solutions">Free Solutions</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">↑</button>
+
+  <script src="/js/main.js"></script>
+</body>
+
+</html>

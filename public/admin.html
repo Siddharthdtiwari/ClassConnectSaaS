@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solutions Manager | ClassConnect OS</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+
+  <style>
+    :root {
+      --pt: #7c3aed; /* Purple */
+      --lt: #10b981; /* Lime/Emerald */
+      --rt: #ef4444; /* Red */
+      --bg: #050508;
+      --bg-card: #0a0a0f;
+      --fg: #ffffff;
+      --fdd: #888888;
+      --bd: rgba(255,255,255,0.1);
+      --bd-focus: rgba(124,58,237,0.5);
+    }
+    
+    body { padding: 40px; background: var(--bg); color: var(--fg); min-height: 100vh; font-family: 'Inter', sans-serif; }
+    .admin-container { max-width: 1400px; margin: 0 auto; }
+    
+    .header { 
+      display: flex; justify-content: space-between; align-items: center; 
+      margin-bottom: 40px; padding-bottom: 20px; 
+      border-bottom: 1px solid var(--bd); 
+    }
+    .header h1 { 
+      margin: 0; font-family: 'Unbounded', sans-serif; font-size: 2.2rem; 
+      color: white; font-weight: 700; display: flex; align-items: center; gap: 15px;
+    }
+    .header h1 img { width: 32px; height: 32px; }
+    .header h1 span { color: var(--pt); }
+    .header-badge { font-family: 'Space Mono', monospace; font-size: 0.6rem; background: rgba(124,58,237,0.2); padding: 5px 10px; border-radius: 20px; color: var(--pt); border: 1px solid var(--bd-focus); letter-spacing: 2px; }
+    
+    #login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+    .login-box { background: var(--bg-card); padding: 50px; border-radius: 16px; border: 1px solid var(--bd); text-align: center; width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+    .login-box input { width: 100%; padding: 15px; margin: 25px 0; background: rgba(255,255,255,0.03); border: 1px solid var(--bd); color: white; border-radius: 8px; font-size: 1rem; font-family: 'Space Mono', monospace; text-align: center; outline: none; transition: border-color 0.3s; }
+    .login-box input:focus { border-color: var(--pt); box-shadow: 0 0 15px rgba(124,58,237,0.2); }
+    
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; }
+    .form-panel, .list-panel { background: var(--bg-card); padding: 30px; border-radius: 16px; border: 1px solid var(--bd); height: fit-content; position: relative; overflow: hidden; }
+    
+    .panel-glow { position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(124,58,237,0.1), transparent 70%); pointer-events: none; }
+    
+    .panel-title { font-family: 'Unbounded', sans-serif; margin-top: 0; margin-bottom: 30px; font-size: 1.2rem; color: white; display: flex; align-items: center; gap: 10px; }
+    
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--fdd); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .form-group input, .form-group select { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--bd); color: white; border-radius: 8px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--pt); box-shadow: 0 0 10px rgba(124,58,237,0.1); background: rgba(0,0,0,0.5); }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+    th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--bd); }
+    th { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--fdd); text-transform: uppercase; letter-spacing: 1px; }
+    td { color: #eaeaea; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    
+    .format-section { display: none; margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px dashed var(--bd); }
+    .format-section.active { display: block; }
+    
+    .btn-small { padding: 8px 14px; font-size: 0.75rem; border-radius: 6px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+    .btn-edit { background: rgba(124,58,237,0.1); color: var(--pt); border: 1px solid var(--bd-focus); }
+    .btn-edit:hover { background: rgba(124,58,237,0.2); }
+    .btn-delete { background: rgba(239,68,68,0.1); color: var(--rt); border: 1px solid rgba(239,68,68,0.3); margin-left: 5px; }
+    .btn-delete:hover { background: rgba(239,68,68,0.2); }
+    
+    .tox-tinymce { border: 1px solid var(--bd) !important; border-radius: 8px !important; }
+    .tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary { background-color: var(--bg) !important; }
+
+    /* AI Bot UI Styles */
+    .ai-chat-panel {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .ai-chat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--bd);
+      padding-bottom: 10px;
+    }
+    .ai-bot-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--p), var(--pt));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(124,58,237,0.3);
+    }
+    .ai-chat-bubble {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      border-top-left-radius: 4px;
+      padding: 12px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #eaeaea;
+    }
+    .ai-prompt-box {
+      margin-top: 15px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .ai-prompt-box textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      resize: vertical;
+      min-height: 60px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    .ai-prompt-box textarea::placeholder {
+      color: var(--fdd);
+    }
+    .ai-typing-loader {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .ai-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--pt);
+      animation: ai-bounce 1.4s infinite ease-in-out both;
+    }
+    .ai-dot:nth-child(1) { animation-delay: -0.32s; }
+    .ai-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes ai-bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Overlay -->
+  <div id="login-overlay">
+    <div class="login-box">
+      <h2 style="font-family:'Unbounded',sans-serif; margin:0; font-size:2rem;">System <span style="color:var(--pt)">Auth</span></h2>
+      <p style="color:var(--fdd); font-size:0.9rem; margin-top:10px; font-family:'Space Mono',monospace;">SECURE ADMIN GATEWAY</p>
+      <input type="password" id="admin-key" placeholder="••••••••••••" onkeypress="if(event.key==='Enter') login()">
+      <button class="btn-main" style="width:100%; padding:15px; font-family:'Space Mono',monospace; font-size:0.9rem;" onclick="login()">INITIALIZE SESSION</button>
+      <p id="login-error" style="color:var(--rt); font-size:0.8rem; display:none; margin-top:15px; font-family:'Space Mono',monospace;">[!] ACCESS DENIED</p>
+    </div>
+  </div>
+
+  <div class="admin-container">
+    <div class="header">
+      <h1><img src="/assets/logo.svg" alt="Logo" width="40" height="40"> Class<span>Connect</span> <span class="header-badge">OS / SOLUTIONS</span></h1>
+      <a href="/solutions" target="_blank" class="btn-out" style="padding: 12px 24px; font-family:'Space Mono',monospace; font-size:0.8rem;">LAUNCH PORTAL ↗</a>
+    </div>
+
+    <div class="dashboard-grid">
+      
+      <!-- Create/Edit Form -->
+      <div class="form-panel">
+        <div class="panel-glow"></div>
+        <h3 class="panel-title">Deploy Resource</h3>
+        <form id="solution-form" onsubmit="saveSolution(event)">
+          <input type="hidden" id="edit-id" value="">
+          
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="title" required placeholder="e.g. Advanced Calculus Guide">
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+            <div class="form-group">
+              <label>Board</label>
+              <input type="text" id="board" placeholder="e.g. CBSE">
+            </div>
+            <div class="form-group">
+              <label>Class / Level</label>
+              <input type="text" id="classLevel" placeholder="e.g. Class 12">
+            </div>
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" id="subject" required placeholder="e.g. Mathematics">
+            </div>
+            <div class="form-group">
+              <label>Chapter</label>
+              <input type="text" id="chapter" placeholder="e.g. Integration">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>YouTube Asset (Optional)</label>
+            <input type="url" id="youtubeLink" placeholder="https://youtube.com/...">
+          </div>
+          
+          <div class="form-group" style="margin-top: 30px;">
+            <label>Deployment Format</label>
+            <select id="formatType" onchange="toggleFormatSection()" required>
+              <option value="PDF">Direct PDF Upload</option>
+              <option value="DriveLink">Google Drive Reference</option>
+              <option value="HTML">Rich Document Editor</option>
+            </select>
+          </div>
+
+          <!-- PDF Upload Section -->
+          <div id="section-PDF" class="format-section active">
+            <label style="font-size:0.7rem; display:block; margin-bottom:10px;">ATTACH PDF DOCUMENT</label>
+            <input type="file" id="pdfFile" accept="application/pdf" style="padding:10px;">
+            <p id="current-pdf-label" style="font-size:0.75rem; color:var(--lt); display:none; margin-top:10px; font-family:'Space Mono',monospace;"></p>
+          </div>
+
+          <!-- Drive Link Section -->
+          <div id="section-DriveLink" class="format-section">
+            <label style="font-size:0.7rem; display:block; margin-bottom:10px;">DRIVE URL REFERENCE</label>
+            <input type="url" id="driveLink" placeholder="https://drive.google.com/.../view">
+          </div>
+
+          <!-- HTML Canvas Section -->
+          <div id="section-HTML" class="format-section" style="padding:0; border:none; background:transparent;">
+            
+            <!-- AI Bot Workspace -->
+            <div class="ai-chat-panel">
+              <div class="ai-chat-header">
+                <div class="ai-bot-avatar">✨</div>
+                <div>
+                  <div style="font-family:'Space Mono',monospace; font-size:0.75rem; color:var(--pt); font-weight:bold;">Solution Bot <span style="font-size:0.6rem; color:var(--fdd); font-weight:normal; margin-left:5px;">online</span></div>
+                  <div style="font-size:0.65rem; color:var(--fdd);">Automated Context Processor</div>
+                </div>
+              </div>
+              
+              <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <div class="ai-bot-avatar" style="width:24px; height:24px; flex-shrink:0;"></div>
+                <div class="ai-chat-bubble">
+                  Hello! I am ready to generate a textbook solution. I will automatically use the Title, Subject, and Chapter you entered above, or you can provide extra context below!
+                </div>
+              </div>
+
+              <!-- Loader -->
+              <div id="ai-loader" class="ai-typing-loader" style="margin-bottom:15px;">
+                <div class="ai-bot-avatar" style="width:24px; height:24px; flex-shrink:0; animation: ai-bounce 2s infinite;"></div>
+                <div class="ai-chat-bubble" style="display:flex; align-items:center; gap:8px; padding:8px 12px;">
+                  <span style="font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--pt);">Processing context</span>
+                  <div style="display:flex; gap:4px;">
+                    <div class="ai-dot"></div>
+                    <div class="ai-dot"></div>
+                    <div class="ai-dot"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ai-prompt-box">
+                <div style="font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--pt); margin-bottom:8px; letter-spacing:1px; text-transform:uppercase;">Custom Instructions (Optional)</div>
+                <textarea id="ai-custom-prompt" placeholder="E.g. Focus specifically on the calculus formulas, format the final answer in bold..."></textarea>
+                <div style="display:flex; justify-content:flex-end;">
+                  <button type="button" id="ai-gen-btn" onclick="generateWithAI()" style="background:var(--pt); color:white; border:none; padding:8px 16px; border-radius:6px; font-size:0.75rem; font-family:'Space Mono',monospace; cursor:pointer; transition:all 0.3s; box-shadow:0 0 15px rgba(124,58,237,0.4);">
+                    INITIALIZE GENERATION
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <label style="font-size:0.7rem; margin-bottom:10px; display:block; font-family:'Space Mono',monospace; color:var(--fdd); letter-spacing:1px;">DOCUMENT CANVAS</label>
+            <textarea id="htmlContent" style="height: 300px; width: 100%;"></textarea>
+          </div>
+
+          <button type="submit" class="btn-main" style="width:100%; padding:16px; margin-top:30px; font-family:'Space Mono',monospace; letter-spacing:1px;" id="submit-btn">EXECUTE DEPLOYMENT</button>
+          <button type="button" class="btn-out" style="width:100%; padding:12px; margin-top:15px; display:none; font-family:'Space Mono',monospace;" id="cancel-btn" onclick="resetForm()">ABORT EDIT</button>
+        </form>
+      </div>
+
+      <!-- List Panel -->
+      <div class="list-panel">
+        <div class="panel-glow" style="right:auto; left:-50px;"></div>
+        <h3 class="panel-title">Active Resources</h3>
+        <div style="overflow-x:auto;">
+          <table id="solutions-table">
+            <thead>
+              <tr>
+                <th>Identifier (Title)</th>
+                <th>Subject</th>
+                <th>Format</th>
+                <th>Operations</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script>
+    let adminKey = localStorage.getItem('classconnect_admin_key') || '';
+    let solutionsData = [];
+
+    tinymce.init({
+      selector: '#htmlContent',
+      height: 450,
+      plugins: 'table lists link code',
+      toolbar: 'undo redo | bold italic | bullist numlist | code',
+      menubar: false,
+      skin: 'oxide-dark',
+      content_css: 'dark',
+      font_family_formats: 'Inter=Inter,sans-serif; Space Mono=Space Mono,monospace;',
+      content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; background: #0a0a0f; color: #fff; }'
+    });
+
+    if (adminKey) {
+      document.getElementById('admin-key').value = adminKey;
+      login(true);
+    }
+
+    async function login(auto = false) {
+      if (!auto) {
+        adminKey = document.getElementById('admin-key').value;
+      }
+      try {
+        const res = await fetch('/api/admin/solutions', {
+          headers: { 'x-admin-key': adminKey }
+        });
+        if (res.ok) {
+          localStorage.setItem('classconnect_admin_key', adminKey);
+          document.getElementById('login-overlay').style.display = 'none';
+          const data = await res.json();
+          solutionsData = data.data;
+          renderTable();
+        } else {
+          if (!auto) document.getElementById('login-error').style.display = 'block';
+          localStorage.removeItem('classconnect_admin_key');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function generateWithAI() {
+      const title = document.getElementById('title').value;
+      const chapter = document.getElementById('chapter').value;
+      const subject = document.getElementById('subject').value;
+      const customPrompt = document.getElementById('ai-custom-prompt').value;
+      
+      if(!title) return alert("Please fill out the Title field first so the AI knows what to generate!");
+      
+      let fullPrompt = `Write a detailed textbook solution for Title: ${title}, Chapter: ${chapter}, Subject: ${subject}.`;
+      if(customPrompt) fullPrompt += ` Additional Instructions: ${customPrompt}`;
+
+      const btn = document.getElementById('ai-gen-btn');
+      const loader = document.getElementById('ai-loader');
+      const originalText = btn.innerHTML;
+      
+      btn.innerHTML = "GENERATING...";
+      btn.disabled = true;
+      loader.style.display = 'flex';
+
+      try {
+        const res = await fetch('/api/admin/generate-solution', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-admin-key': adminKey 
+          },
+          body: JSON.stringify({ prompt: fullPrompt })
+        });
+        const data = await res.json();
+        if(res.ok && data.success) {
+          tinymce.get('htmlContent').setContent(data.html);
+          // Optional: scroll to canvas
+          document.querySelector('.tox-tinymce').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          alert("Error: " + (data.error || data.message));
+        }
+      } catch (e) {
+        alert("Network error generating solution.");
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        loader.style.display = 'none';
+      }
+    }
+
+    function toggleFormatSection() {
+      const format = document.getElementById('formatType').value;
+      document.querySelectorAll('.format-section').forEach(el => el.classList.remove('active'));
+      document.getElementById('section-' + format).classList.add('active');
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector('#solutions-table tbody');
+      tbody.innerHTML = '';
+      solutionsData.forEach(sol => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:500; font-family:'Inter',sans-serif;">${sol.title}</td>
+          <td>${sol.subject}</td>
+          <td><span style="font-family:'Space Mono',monospace; font-size:0.65rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:4px 8px; border-radius:12px;">${sol.formatType}</span></td>
+          <td style="white-space:nowrap;">
+            <button class="btn-small btn-edit" onclick="editSolution('${sol._id}')">EDIT</button>
+            <button class="btn-small btn-delete" onclick="deleteSolution('${sol._id}')">DEL</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function editSolution(id) {
+      const sol = solutionsData.find(s => s._id === id);
+      if (!sol) return;
+
+      document.getElementById('edit-id').value = sol._id;
+      document.getElementById('title').value = sol.title;
+      document.getElementById('board').value = sol.board || '';
+      document.getElementById('classLevel').value = sol.classLevel || '';
+      document.getElementById('subject').value = sol.subject;
+      document.getElementById('chapter').value = sol.chapter || '';
+      document.getElementById('youtubeLink').value = sol.youtubeLink || '';
+      
+      document.getElementById('formatType').value = sol.formatType;
+      toggleFormatSection();
+
+      if (sol.formatType === 'PDF') {
+        const lbl = document.getElementById('current-pdf-label');
+        lbl.style.display = 'block';
+        lbl.innerText = `[CONNECTED] ${sol.pdfUrl}`;
+      } else if (sol.formatType === 'DriveLink') {
+        document.getElementById('driveLink').value = sol.driveLink || '';
+      } else if (sol.formatType === 'HTML') {
+        tinymce.get('htmlContent').setContent(sol.htmlContent || '');
+      }
+
+      document.getElementById('submit-btn').innerText = 'UPDATE RESOURCE';
+      document.getElementById('cancel-btn').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+      document.getElementById('solution-form').reset();
+      document.getElementById('edit-id').value = '';
+      document.getElementById('submit-btn').innerText = 'EXECUTE DEPLOYMENT';
+      document.getElementById('cancel-btn').style.display = 'none';
+      document.getElementById('current-pdf-label').style.display = 'none';
+      tinymce.get('htmlContent').setContent('');
+      toggleFormatSection();
+    }
+
+    async function saveSolution(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-id').value;
+      const formData = new FormData();
+      
+      formData.append('title', document.getElementById('title').value);
+      formData.append('board', document.getElementById('board').value);
+      formData.append('classLevel', document.getElementById('classLevel').value);
+      formData.append('subject', document.getElementById('subject').value);
+      formData.append('chapter', document.getElementById('chapter').value);
+      formData.append('youtubeLink', document.getElementById('youtubeLink').value);
+      
+      const formatType = document.getElementById('formatType').value;
+      formData.append('formatType', formatType);
+
+      if (formatType === 'PDF') {
+        const fileInput = document.getElementById('pdfFile');
+        if (fileInput.files.length > 0) {
+          formData.append('pdfFile', fileInput.files[0]);
+        } else if (!id) {
+          alert('System requires PDF payload.');
+          return;
+        }
+      } else if (formatType === 'DriveLink') {
+        formData.append('driveLink', document.getElementById('driveLink').value);
+      } else if (formatType === 'HTML') {
+        formData.append('htmlContent', tinymce.get('htmlContent').getContent());
+      }
+
+      const url = id ? `/api/admin/solutions/${id}` : '/api/admin/solutions';
+      const method = id ? 'PUT' : 'POST';
+
+      const btn = document.getElementById('submit-btn');
+      btn.innerText = 'PROCESSING...';
+      
+      try {
+        const res = await fetch(url, {
+          method: method,
+          headers: { 'x-admin-key': adminKey },
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          resetForm();
+          login(true);
+        } else {
+          alert(data.message || data.error);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('System fault occurred.');
+      }
+      btn.innerText = 'EXECUTE DEPLOYMENT';
+    }
+
+    async function deleteSolution(id) {
+      if (!confirm('WARNING: Confirm deletion of this resource?')) return;
+      try {
+        const res = await fetch(`/api/admin/solutions/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-admin-key': adminKey }
+        });
+        const data = await res.json();
+        if (data.success) {
+          login(true);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
