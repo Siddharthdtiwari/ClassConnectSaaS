@@ -434,3 +434,5 @@ app.listen(PORT, () => {
 });
 
 // style updated
+
+// email templates updated
