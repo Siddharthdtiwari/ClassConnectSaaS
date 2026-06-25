@@ -436,3 +436,5 @@ app.listen(PORT, () => {
 // style updated
 
 // email templates updated
+
+// gemini AI integration
