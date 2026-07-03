@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /view_solution.html
+
+Sitemap: https://classconnects.vercel.app/sitemap.xml
