@@ -440,3 +440,4 @@ app.listen(PORT, () => {
 // gemini AI integration
 
 // security patch
+module.exports = app;
