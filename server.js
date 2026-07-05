@@ -108,8 +108,11 @@ if (process.env.MONGO_URI) {
 
 // Ensures MongoDB is actually connected before any route that queries it runs, rather than
 // letting Mongoose silently buffer (and eventually time out) requests issued too early.
+// Scoped to database-backed paths only — static assets (css/js/images/pages) must never
+// stall behind an Atlas connection on a serverless cold start.
+const DB_BACKED_PATH_RE = /^\/(api\/|solutions\/.|view_solution|sitemap\.xml)/;
 app.use(async (req, res, next) => {
-  if (!process.env.MONGO_URI) return next();
+  if (!process.env.MONGO_URI || !DB_BACKED_PATH_RE.test(req.path)) return next();
   try {
     await connectToDatabase();
     next();
@@ -260,8 +263,19 @@ ${u.lastmod ? `    <lastmod>${u.lastmod}</lastmod>\n` : ''}    <changefreq>${u.c
   }
 });
 
-// Serve static files from the 'public' directory with .html extension fallback
-app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
+// Serve static files from the 'public' directory with .html extension fallback.
+// Assets get a day of browser caching (they only change on deploys); HTML stays
+// no-cache so page updates show up immediately.
+app.use(express.static(path.join(__dirname, 'public'), {
+  extensions: ['html'],
+  setHeaders: (res, filePath) => {
+    if (/\.(css|js|svg|png|ico|jpg|jpeg|webp|woff2?)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    } else {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  }
+}));
 
 // Rate limiters
 const contactLimiter = rateLimit({
@@ -296,8 +310,16 @@ const storage = new CloudinaryStorage({
     resource_type: 'raw', // Support PDFs and docs
     // Strip everything except alphanumerics/dash/underscore from the user-supplied
     // filename before it reaches the Cloudinary SDK (defense in depth against
-    // parameter-injection via special characters like '&' or '|').
-    public_id: (req, file) => Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9_-]+/g, '-')
+    // parameter-injection via special characters like '&' or '|'), then force a .pdf
+    // extension back on — fileFilter below already guarantees the upload IS a PDF, and
+    // for resource_type 'raw' the extension has to be part of the public_id itself or
+    // Cloudinary serves/downloads it with no extension at all (breaks inline preview
+    // and gives downloaded files a useless filename).
+    public_id: (req, file) => {
+      const nameWithoutExt = file.originalname.replace(/\.[^./]+$/, '');
+      const sanitized = nameWithoutExt.replace(/[^a-zA-Z0-9_-]+/g, '-');
+      return `${Date.now()}-${sanitized}.pdf`;
+    }
   },
 });
 const upload = multer({
@@ -539,13 +561,14 @@ function buildSearchTerms(rawSearch) {
 
 app.get('/api/solutions', globalApiLimiter, async (req, res) => {
   try {
-    const { board, classLevel, subject, search } = req.query;
+    const { board, classLevel, subject, playlist, search } = req.query;
     const query = { isActive: true };
     // Case-insensitive exact match — admin-entered casing (e.g. "science") shouldn't
     // have to match the public filter dropdown's casing (e.g. "Science") exactly.
     if (board && typeof board === 'string') query.board = { $regex: `^${escapeRegex(board)}$`, $options: 'i' };
     if (classLevel && typeof classLevel === 'string') query.classLevel = classLevel;
     if (subject && typeof subject === 'string') query.subject = { $regex: `^${escapeRegex(subject)}$`, $options: 'i' };
+    if (playlist && typeof playlist === 'string') query.playlist = { $regex: `^${escapeRegex(playlist)}$`, $options: 'i' };
     if (search && typeof search === 'string') {
       const terms = buildSearchTerms(search);
       if (terms.length) {
@@ -581,17 +604,19 @@ function dedupeCaseInsensitive(values) {
 // used, instead of a hardcoded list that drifts out of date.
 app.get('/api/solutions/filters', globalApiLimiter, async (req, res) => {
   try {
-    const [boards, classLevels, subjects] = await Promise.all([
+    const [boards, classLevels, subjects, playlists] = await Promise.all([
       Solution.distinct('board', { isActive: true, board: { $nin: [null, ''] } }),
       Solution.distinct('classLevel', { isActive: true, classLevel: { $nin: [null, ''] } }),
-      Solution.distinct('subject', { isActive: true, subject: { $nin: [null, ''] } })
+      Solution.distinct('subject', { isActive: true, subject: { $nin: [null, ''] } }),
+      Solution.distinct('playlist', { isActive: true, playlist: { $nin: [null, ''] } })
     ]);
     res.json({
       success: true,
       data: {
         boards: dedupeCaseInsensitive(boards).sort(),
         classLevels: classLevels.sort((a, b) => Number(a) - Number(b)),
-        subjects: dedupeCaseInsensitive(subjects).sort()
+        subjects: dedupeCaseInsensitive(subjects).sort(),
+        playlists: dedupeCaseInsensitive(playlists).sort()
       }
     });
   } catch (err) {

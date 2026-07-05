@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Apply the saved theme before first paint so navigating between pages doesn't
+       flash each page's hardcoded default theme before the body scripts catch up. -->
+  <script>(function(){var t=localStorage.getItem('classconnect-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <title>Solutions Manager | ClassConnect OS</title>
   <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -168,6 +171,21 @@
     @keyframes ai-bounce {
       0%, 80%, 100% { transform: scale(0); }
       40% { transform: scale(1); }
+    }
+
+    /* Responsive: stack the two-column dashboard on smaller screens */
+    @media (max-width: 1024px) {
+      body { padding: 20px 14px; }
+      .dashboard-grid { grid-template-columns: 1fr; gap: 24px; }
+      .header h1 { font-size: 1.5rem; }
+      .header h1 img { width: 28px; height: 28px; }
+    }
+    @media (max-width: 520px) {
+      body { padding: 12px 8px; }
+      .form-panel, .list-panel { padding: 20px 16px; }
+      .login-box { width: min(92vw, 450px); padding: 32px 20px; }
+      .header-badge { display: none; }
+      th, td { padding: 10px 8px; font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -366,6 +384,10 @@
       <!-- List Panel -->
       <div class="list-panel">
         <div class="panel-glow" style="right:auto; left:-50px;"></div>
+        <!-- The Rich Document Editor (#section-HTML) is moved in here by JS whenever
+             that format is selected, so it gets the wider right-hand column instead of
+             being squeezed into the narrow form panel. -->
+        <div id="html-editor-dock" style="display:none; margin-bottom: 30px;"></div>
         <h3 class="panel-title">Active Resources</h3>
         <div style="overflow-x:auto;">
           <table id="solutions-table">
@@ -394,10 +416,11 @@
     let solutionsData = [];
     let playlistNames = [];
 
-    // main.js applies the saved theme, but it loads at the end of the page — apply it
-    // here first so TinyMCE picks the right skin on its very first init below.
-    const savedThemeForEditor = localStorage.getItem('classconnect-theme');
-    if (savedThemeForEditor) document.documentElement.setAttribute('data-theme', savedThemeForEditor);
+    // Dock the HTML editor section in the wide right-hand column ONCE, before TinyMCE
+    // initializes below. Moving the node after init would destroy TinyMCE's iframe and
+    // silently wipe whatever the admin had typed — toggleFormatSection only ever toggles
+    // visibility from here on, never moves the node.
+    document.getElementById('html-editor-dock').appendChild(document.getElementById('section-HTML'));
 
     // TinyMCE's skin/content CSS are separate stylesheets, not CSS variables, so they
     // can't just follow the page theme automatically — read the current theme and pick
@@ -420,7 +443,7 @@
     function initEditor(initialContent = '') {
       tinymce.init({
         selector: '#htmlContent',
-        height: 450,
+        height: 650,
         plugins: 'table lists link code',
         toolbar: 'undo redo | bold italic | bullist numlist | code',
         menubar: false,
@@ -573,6 +596,10 @@
       const format = document.getElementById('formatType').value;
       document.querySelectorAll('.format-section').forEach(el => el.classList.remove('active'));
       document.getElementById('section-' + format).classList.add('active');
+
+      // The editor lives permanently in the right-column dock (moved there before
+      // TinyMCE init) — just show/hide the dock, never re-append the node.
+      document.getElementById('html-editor-dock').style.display = format === 'HTML' ? 'block' : 'none';
     }
 
     function renderTable() {

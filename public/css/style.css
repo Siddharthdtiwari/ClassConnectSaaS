@@ -1986,6 +1986,30 @@ footer {
   .hamburger {
     display: flex;
   }
+}
+
+/* Very narrow phones: the full nav (logo mark + wordmark + theme toggle + hamburger)
+   overflows ~373px, which expands the mobile layout viewport and letterboxes the page.
+   Tighten spacing and drop the wordmark text — the logo mark alone still brands the bar. */
+@media (max-width: 400px) {
+  nav {
+    padding: 12px 14px;
+  }
+
+  .nav-cta {
+    gap: 8px;
+  }
+
+  .logo {
+    gap: 6px;
+  }
+
+  .logo-wordmark {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
 
   .hero {
     padding: 0 24px 56px;

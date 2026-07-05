@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Apply the saved theme before first paint so navigating between pages doesn't
+       flash each page's hardcoded default theme before main.js catches up. -->
+  <script>(function(){var t=localStorage.getItem('classconnect-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 
   <meta name="description" content="ClassConnect is a premium platform built for modern coaching institutes to manage attendance, tests, fees, and parent communication in one seamless hub.">
   <meta name="keywords" content="ClassConnect, coaching institute software, class management, education platform, attendance tracking, fee management software, student portal">

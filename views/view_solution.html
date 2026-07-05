@@ -140,6 +140,57 @@
     .watermark {
       text-align: right; margin-top: 50px; border-top: 1px solid #eee; padding-top: 15px; font-size: 10px; color: #888;
     }
+
+    /* Branded document chrome for typed/AI (HTML) solutions — mirrors the look of the
+       exported PDF handouts: logo header, blue underlined title, chapter heading, and a
+       large translucent logo watermark behind the content. */
+    .paper-wrapper { position: relative; overflow: hidden; }
+    .paper-wrapper.branded::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('/assets/logo.svg') center 45% / min(70%, 420px) no-repeat;
+      opacity: 0.07;
+      pointer-events: none;
+    }
+    .paper-wrapper.branded > * { position: relative; z-index: 1; }
+    .doc-header {
+      display: none;
+      align-items: center;
+      gap: 18px;
+      justify-content: center;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #1a1aa6;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    .doc-header img { width: 64px; height: 64px; flex-shrink: 0; }
+    .doc-header-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #1a1aa6;
+      text-decoration: underline;
+    }
+    .doc-header-link {
+      display: block;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      color: #1a1aa6;
+      text-decoration: underline;
+      margin-top: 4px;
+    }
+    .doc-chapter {
+      display: none;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: #111;
+      text-decoration: underline;
+      margin: 0 0 24px 0;
+    }
     
     @media print {
       body { background: white !important; display: block !important; height: auto !important; overflow: visible !important; color: black !important; }
@@ -156,10 +207,15 @@
     #error { color: #ef4444; display: none; }
     
     @media (max-width: 900px) {
-      body { flex-direction: column; overflow: auto; height: auto; }
+      body { flex-direction: column; overflow: auto; height: auto; overflow-x: hidden; }
+      /* !important needed to beat the element's inline flex-direction:row */
+      #app { flex-direction: column !important; height: auto !important; }
       .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--bd); padding: 20px; }
-      .main-content { padding: 20px; overflow: visible; }
-      .paper-wrapper { padding: 30px 20px; }
+      .main-content { width: 100%; padding: 20px 12px; overflow: visible; }
+      .paper-wrapper { padding: 30px 16px; min-height: auto; }
+      .doc-header { flex-direction: column; gap: 8px; }
+      .doc-header-title { font-size: 1.15rem; }
+      .doc-chapter { font-size: 1.1rem; }
     }
   </style>
 </head>
@@ -203,7 +259,15 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <div class="paper-wrapper">
+      <div class="paper-wrapper" id="paper-wrapper">
+        <div class="doc-header" id="doc-header">
+          <img src="/assets/logo.svg" alt="ClassConnect Logo">
+          <div>
+            <div class="doc-header-title" id="doc-header-title"></div>
+            <a class="doc-header-link" href="/" id="doc-header-link"></a>
+          </div>
+        </div>
+        <h1 class="doc-chapter" id="doc-chapter"></h1>
         <div id="sol-content"></div>
         <div class="watermark">
           Verified solution via <strong style="color: #7c3aed;">ClassConnect</strong>
@@ -240,7 +304,9 @@
           const sol = data.data;
           document.getElementById('loading').style.display = 'none';
           
-          document.getElementById('app').style.display = window.innerWidth > 900 ? 'flex' : 'block';
+          // Always flex — the ≤900px media query flips it to a column layout in CSS,
+          // which is robust under mobile zoom where window.innerWidth sniffing isn't.
+          document.getElementById('app').style.display = 'flex';
           
           document.title = sol.title + ' - ClassConnect Solutions';
           
@@ -259,6 +325,29 @@
             solContent.innerHTML = (typeof DOMPurify !== 'undefined')
               ? DOMPurify.sanitize(sol.htmlContent || '')
               : ''; // fail closed if the sanitizer failed to load rather than render raw HTML
+
+            // Branded document chrome (header, chapter heading, watermark) — matches the
+            // look of the exported PDF handouts. Only for typed/AI solutions; PDF/Drive
+            // formats render inside an iframe where this would just duplicate content.
+            const ordinal = n => {
+              const num = parseInt(n, 10);
+              if (isNaN(num)) return n;
+              const suffix = [11, 12, 13].includes(num % 100) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[num % 10] || 'th');
+              return num + suffix;
+            };
+            const headerParts = ['ClassConnect Solutions'];
+            if (sol.subject) headerParts.push(sol.subject);
+            if (sol.classLevel) headerParts.push(ordinal(sol.classLevel));
+            document.getElementById('doc-header-title').innerText = headerParts.join(' – ');
+            document.getElementById('doc-header-link').innerText = window.location.origin.replace(/^https?:\/\//, '');
+            document.getElementById('doc-header').style.display = 'flex';
+            if (sol.chapter) {
+              const chapterLabel = sol.chapterNumber ? `Chapter ${sol.chapterNumber}: ${sol.chapter}` : sol.chapter;
+              const docChapter = document.getElementById('doc-chapter');
+              docChapter.innerText = chapterLabel;
+              docChapter.style.display = 'block';
+            }
+            document.getElementById('paper-wrapper').classList.add('branded');
           } else if (sol.formatType === 'PDF' && safeUrl(sol.pdfUrl)) {
             const pdfUrl = safeUrl(sol.pdfUrl);
             actionBtn.href = pdfUrl;
@@ -320,13 +409,6 @@
     }
 
     loadSolution();
-    
-    window.addEventListener('resize', () => {
-      const app = document.getElementById('app');
-      if(app.style.display !== 'none') {
-        app.style.display = window.innerWidth > 900 ? 'flex' : 'block';
-      }
-    });
   </script>
 </body>
 </html>

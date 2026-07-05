@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Apply the saved theme before first paint so navigating between pages doesn't
+       flash each page's hardcoded default theme before main.js catches up. -->
+  <script>(function(){var t=localStorage.getItem('classconnect-theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
 
   <meta name="description" content="Download free premium textbook solutions for your exams. ClassConnect Solutions Hub provides high quality answers, PDFs and AI-generated study material.">
   <title>Solutions Hub | ClassConnect</title>
@@ -30,7 +33,10 @@
     }
 
     /* Solutions specific styles */
-    .search-hero { padding: 120px 20px 60px; text-align: center; position: relative; }
+    /* overflow:hidden clips the decorative glow rings (they extend hundreds of px past
+       the right edge) — without it mobile browsers expand the layout viewport to fit
+       them and the whole page renders zoomed-out with a dead gutter down the side. */
+    .search-hero { padding: 120px 20px 60px; text-align: center; position: relative; overflow: hidden; }
     .search-bar-container { max-width: 800px; margin: 40px auto; position: relative; }
     
     .search-bar { 
@@ -55,7 +61,19 @@
     }
     .filter-select:hover { border-color: var(--pt); }
 
-    .solutions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px; max-width: 1300px; margin: 0 auto 100px; padding: 0 20px; }
+    @media (max-width: 640px) {
+      .search-hero { padding: 90px 16px 40px; }
+      .search-bar { padding: 18px 24px; font-size: 1rem; }
+      /* 2×2 grid instead of ragged centered wrapping for the four filter pills */
+      .filters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .filter-select { width: 100%; padding: 12px 14px; font-size: 0.75rem; }
+      .solutions-grid { gap: 20px; padding: 0 14px; }
+      .solution-card { padding: 24px 20px; }
+    }
+
+    /* min(100%, 350px) lets card tracks shrink below 350px on narrow phones instead of
+       forcing horizontal overflow. */
+    .solutions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr)); gap: 40px; max-width: 1300px; margin: 0 auto 100px; padding: 0 20px; }
     
     .solution-card { 
       background: rgba(255,255,255,0.02); border: 1px solid var(--bd); border-radius: 24px; 
@@ -77,6 +95,7 @@
     
     .sol-meta { display: flex; gap: 8px; margin-bottom: 20px; font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--fdd); text-transform: uppercase; flex-wrap: wrap; letter-spacing: 1px;}
     .sol-tag { background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+    .sol-tag-playlist { background: rgba(124,58,237,0.15); color: var(--pt); border-color: rgba(124,58,237,0.3); }
     
     .sol-title { font-family: 'Unbounded', sans-serif; font-size: 1.4rem; margin-bottom: 15px; color: var(--fg); line-height: 1.3; font-weight: 700; }
     .sol-chapter { font-family: 'Inter', sans-serif; color: var(--fdd); font-size: 0.95rem; margin-bottom: 30px; flex-grow: 1; }
@@ -107,8 +126,10 @@
 
 <body>
 
+  <div id="cur"></div>
+
   <div class="page">
-    
+
     <!-- ═══ NAV ═══ -->
     <nav>
       <a href="/" class="logo">
@@ -195,6 +216,9 @@
           <select class="filter-select" id="subjectSelect" onchange="fetchSolutions()">
             <option value="">All Subjects</option>
           </select>
+          <select class="filter-select" id="playlistSelect" onchange="fetchSolutions()">
+            <option value="">All Playlists</option>
+          </select>
         </div>
       </div>
     </section>
@@ -258,6 +282,11 @@
         data.data.subjects.forEach(s => {
           subjectSelect.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`);
         });
+
+        const playlistSelect = document.getElementById('playlistSelect');
+        data.data.playlists.forEach(p => {
+          playlistSelect.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`);
+        });
       } catch (err) {
         console.error('Failed to load filter options:', err);
       }
@@ -270,12 +299,14 @@
       const board = document.getElementById('boardSelect').value;
       const classLevel = document.getElementById('classSelect').value;
       const subject = document.getElementById('subjectSelect').value;
+      const playlist = document.getElementById('playlistSelect').value;
 
       const params = new URLSearchParams();
       if (search) params.append('search', search);
       if (board) params.append('board', board);
       if (classLevel) params.append('classLevel', classLevel);
       if (subject) params.append('subject', subject);
+      if (playlist) params.append('playlist', playlist);
 
       try {
         const res = await fetch(`/api/solutions?${params.toString()}`);
@@ -349,6 +380,7 @@
           <div class="solution-card">
             <div class="solution-card-glow"></div>
             <div class="sol-meta">
+              ${sol.playlist ? `<span class="sol-tag sol-tag-playlist">${escapeHtml(sol.playlist)}</span>` : ''}
               <span class="sol-tag">${escapeHtml(sol.subject)}</span>
               ${sol.classLevel ? `<span class="sol-tag">Class ${escapeHtml(sol.classLevel)}</span>` : ''}
               ${sol.board ? `<span class="sol-tag">${escapeHtml(sol.board)}</span>` : ''}
