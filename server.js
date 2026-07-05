@@ -21,6 +21,14 @@ const app = express();
 const SITE_URL = process.env.SITE_URL || 'https://classconnects.vercel.app';
 const PORT = process.env.PORT || 3000;
 
+// Vercel sits one hop in front of this app — trust its proxy so req.ip / the
+// X-Forwarded-For header resolve to the real client IP (required by express-rate-limit,
+// which otherwise throws a ValidationError on Vercel). Left unset elsewhere, since
+// trusting proxy headers you don't actually have would let clients spoof their IP.
+if (process.env.VERCEL) {
+  app.set('trust proxy', 1);
+}
+
 if (!process.env.ADMIN_SECRET_KEY || process.env.ADMIN_SECRET_KEY.length < 20) {
   console.warn('⚠️ ADMIN_SECRET_KEY is missing or too short/weak. Set a long, random value in .env before deploying to production.');
 }
