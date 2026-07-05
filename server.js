@@ -77,6 +77,48 @@ app.use(express.urlencoded({ extended: true }));
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 
+// --- MongoDB connection (serverless-safe) ---
+// On Vercel, a cold start re-runs this whole module; mongoose.connect() is async, and if a
+// request arrives before it finishes (e.g. a slow TLS handshake to Atlas), Mongoose just
+// buffers the query and eventually gives up with "buffering timed out after 10000ms". This
+// caches the connection promise and makes every request actually wait for a ready connection
+// (or reuse the existing one) instead of racing a fixed buffer timeout.
+let mongoConnectionPromise = null;
+function connectToDatabase() {
+  if (mongoose.connection.readyState === 1) return Promise.resolve(mongoose.connection);
+  if (!mongoConnectionPromise) {
+    mongoConnectionPromise = mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 20000
+    }).then(() => {
+      console.log('✅ MongoDB Connected');
+      return mongoose.connection;
+    }).catch(err => {
+      mongoConnectionPromise = null; // don't cache a failed attempt forever — let the next request retry
+      throw err;
+    });
+  }
+  return mongoConnectionPromise;
+}
+
+if (process.env.MONGO_URI) {
+  connectToDatabase().catch(err => console.error('⚠️ MongoDB Connection Error:', err.message));
+} else {
+  console.warn('⚠️ No MONGO_URI provided in .env, database features will not work.');
+}
+
+// Ensures MongoDB is actually connected before any route that queries it runs, rather than
+// letting Mongoose silently buffer (and eventually time out) requests issued too early.
+app.use(async (req, res, next) => {
+  if (!process.env.MONGO_URI) return next();
+  try {
+    await connectToDatabase();
+    next();
+  } catch (err) {
+    console.error('Database unavailable:', err.message);
+    res.status(503).json({ success: false, message: 'Database temporarily unavailable. Please try again shortly.' });
+  }
+});
+
 // --- SOLUTION DETAIL PAGES (SEO) ---
 // These are registered before express.static so they take precedence over any static
 // file that might share a path, and so Google/social crawlers see real per-solution
@@ -239,15 +281,6 @@ const adminLimiter = rateLimit({
   max: 200, // admin-authenticated traffic, still bounded to blunt brute-force / key-guessing
   message: { success: false, message: 'Too many requests, please try again later.' }
 });
-
-// Setup MongoDB connection
-if (process.env.MONGO_URI) {
-  mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('✅ MongoDB Connected'))
-    .catch(err => console.error('⚠️ MongoDB Connection Error:', err));
-} else {
-  console.warn('⚠️ No MONGO_URI provided in .env, database features will not work.');
-}
 
 // Setup Cloudinary Configuration
 cloudinary.config({
