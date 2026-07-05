@@ -14,7 +14,7 @@ if (saved) document.documentElement.setAttribute('data-theme', saved)
 
 // ── CURSOR ──────────────────────────────────────────
 const curEl = document.getElementById('cur')
-if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+if (curEl && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   document.addEventListener('mousemove', e => {
     curEl.style.left = e.clientX + 'px'
     curEl.style.top = e.clientY + 'px'

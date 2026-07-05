@@ -347,9 +347,6 @@ nav::before {
   flex-shrink: 0;
 }
 
-.logo:hover .logo-mark {
-}
-
 .logo-mark svg {
   display: block;
 }
@@ -1981,7 +1978,8 @@ footer {
   }
 
   .nav-mid,
-  .nav-cta .btn-main {
+  .nav-cta .btn-main,
+  .nav-cta .btn-out {
     display: none;
   }
 

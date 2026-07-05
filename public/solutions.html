@@ -20,6 +20,15 @@
   <link rel="stylesheet" href="/css/style.css">
 
   <style>
+    /* Short aliases used throughout this page's rules below — mapped to the
+       shared theme-aware tokens from style.css so they follow the light/dark toggle. */
+    :root {
+      --pt: var(--purple-text);
+      --rt: var(--red);
+      --fdd: var(--fg-dim);
+      --bd: var(--border);
+    }
+
     /* Solutions specific styles */
     .search-hero { padding: 120px 20px 60px; text-align: center; position: relative; }
     .search-bar-container { max-width: 800px; margin: 40px auto; position: relative; }
@@ -37,9 +46,9 @@
     }
     
     .filters { display: flex; justify-content: center; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
-    .filter-select { 
-      padding: 12px 25px; border-radius: 40px; 
-      background: rgba(0,0,0,0.5); border: 1px solid var(--bd); 
+    .filter-select {
+      padding: 12px 25px; border-radius: 40px;
+      background: var(--bg-card); border: 1px solid var(--bd);
       color: var(--fg); font-family: 'Space Mono', monospace; font-size: 0.85rem;
       outline: none; cursor: pointer; backdrop-filter: blur(10px);
       transition: all 0.3s;
@@ -179,25 +188,12 @@
         <div class="filters">
           <select class="filter-select" id="boardSelect" onchange="fetchSolutions()">
             <option value="">All Boards</option>
-            <option value="CBSE">CBSE</option>
-            <option value="ICSE">ICSE</option>
-            <option value="State">State Board</option>
           </select>
           <select class="filter-select" id="classSelect" onchange="fetchSolutions()">
             <option value="">All Classes</option>
-            <option value="12">Class 12</option>
-            <option value="11">Class 11</option>
-            <option value="10">Class 10</option>
-            <option value="9">Class 9</option>
-            <option value="8">Class 8</option>
           </select>
           <select class="filter-select" id="subjectSelect" onchange="fetchSolutions()">
             <option value="">All Subjects</option>
-            <option value="Physics">Physics</option>
-            <option value="Chemistry">Chemistry</option>
-            <option value="Maths">Maths</option>
-            <option value="Biology">Biology</option>
-            <option value="Science">Science</option>
           </select>
         </div>
       </div>
@@ -236,6 +232,35 @@
           </div>
         </div>
       `).join('');
+    }
+
+    // Populates the filter dropdowns from whatever board/class/subject values actually
+    // exist in the data, instead of a hardcoded guess that drifts out of sync with the
+    // admin panel's fields (e.g. Board isn't collected at all right now, and Class only
+    // goes up to 10 — the old hardcoded list didn't reflect either of those facts).
+    async function loadFilterOptions() {
+      try {
+        const res = await fetch('/api/solutions/filters');
+        const data = await res.json();
+        if (!data.success) return;
+
+        const boardSelect = document.getElementById('boardSelect');
+        data.data.boards.forEach(b => {
+          boardSelect.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`);
+        });
+
+        const classSelect = document.getElementById('classSelect');
+        data.data.classLevels.forEach(c => {
+          classSelect.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(c)}">Class ${escapeHtml(c)}</option>`);
+        });
+
+        const subjectSelect = document.getElementById('subjectSelect');
+        data.data.subjects.forEach(s => {
+          subjectSelect.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`);
+        });
+      } catch (err) {
+        console.error('Failed to load filter options:', err);
+      }
     }
 
     async function fetchSolutions() {
@@ -294,16 +319,21 @@
         const pdfUrl = safeUrl(sol.pdfUrl);
         const driveLink = safeUrl(sol.driveLink);
         const youtubeLink = safeUrl(sol.youtubeLink);
+        // Route through our own /solutions/:slug page rather than linking straight to the
+        // external file — that page has real per-solution meta tags (so it's actually
+        // indexable by Google) and still gives access to the underlying PDF/Drive file.
+        // Falls back to the raw link/legacy id-based URL for any record without a slug yet.
+        const detailUrl = sol.slug ? `/solutions/${encodeURIComponent(sol.slug)}` : null;
         if (sol.formatType === 'PDF' && pdfUrl) {
-          actionBtn = `<a href="${pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn-sol btn-sol-main">
+          actionBtn = `<a href="${detailUrl || pdfUrl}" target="_blank" rel="noopener noreferrer" class="btn-sol btn-sol-main">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> View PDF
                        </a>`;
         } else if (sol.formatType === 'DriveLink' && driveLink) {
-          actionBtn = `<a href="${driveLink}" target="_blank" rel="noopener noreferrer" class="btn-sol btn-sol-main">
+          actionBtn = `<a href="${detailUrl || driveLink}" target="_blank" rel="noopener noreferrer" class="btn-sol btn-sol-main">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> Open Drive
                        </a>`;
         } else if (sol.formatType === 'HTML') {
-          actionBtn = `<a href="/view_solution?id=${encodeURIComponent(sol._id)}" target="_blank" class="btn-sol btn-sol-main">
+          actionBtn = `<a href="${detailUrl || `/view_solution?id=${encodeURIComponent(sol._id)}`}" target="_blank" rel="noopener noreferrer" class="btn-sol btn-sol-main">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> Read Solution
                        </a>`;
         }
@@ -335,6 +365,7 @@
     }
 
     // Initial load
+    loadFilterOptions();
     fetchSolutions();
   </script>
   <script src="/js/main.js"></script>

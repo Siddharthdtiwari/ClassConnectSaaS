@@ -21,8 +21,23 @@
       --fdd: #888888;
       --bd: rgba(255,255,255,0.1);
       --bd-focus: rgba(124,58,237,0.5);
+      --well-bg: rgba(0,0,0,0.3);
+      --well-bg-strong: rgba(0,0,0,0.5);
+      --surface-subtle: rgba(255,255,255,0.04);
     }
-    
+
+    /* Light-mode surface colors — accent colors (--pt/--lt/--rt) stay the same across themes */
+    :root[data-theme="light"] {
+      --bg: #F4F0F9;
+      --bg-card: #ffffff;
+      --fg: #0C0C0C;
+      --fdd: #666666;
+      --bd: rgba(0,0,0,0.1);
+      --well-bg: rgba(0,0,0,0.04);
+      --well-bg-strong: rgba(0,0,0,0.07);
+      --surface-subtle: rgba(0,0,0,0.03);
+    }
+
     body { padding: 40px; background: var(--bg); color: var(--fg); min-height: 100vh; font-family: 'Inter', sans-serif; }
     .admin-container { max-width: 1400px; margin: 0 auto; }
     
@@ -33,7 +48,7 @@
     }
     .header h1 { 
       margin: 0; font-family: 'Unbounded', sans-serif; font-size: 2.2rem; 
-      color: white; font-weight: 700; display: flex; align-items: center; gap: 15px;
+      color: var(--fg); font-weight: 700; display: flex; align-items: center; gap: 15px;
     }
     .header h1 img { width: 32px; height: 32px; }
     .header h1 span { color: var(--pt); }
@@ -41,7 +56,7 @@
     
     #login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center; z-index: 9999; }
     .login-box { background: var(--bg-card); padding: 50px; border-radius: 16px; border: 1px solid var(--bd); text-align: center; width: 450px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
-    .login-box input { width: 100%; padding: 15px; margin: 25px 0; background: rgba(255,255,255,0.03); border: 1px solid var(--bd); color: white; border-radius: 8px; font-size: 1rem; font-family: 'Space Mono', monospace; text-align: center; outline: none; transition: border-color 0.3s; }
+    .login-box input { width: 100%; padding: 15px; margin: 25px 0; background: var(--surface-subtle); border: 1px solid var(--bd); color: var(--fg); border-radius: 8px; font-size: 1rem; font-family: 'Space Mono', monospace; text-align: center; outline: none; transition: border-color 0.3s; }
     .login-box input:focus { border-color: var(--pt); box-shadow: 0 0 15px rgba(124,58,237,0.2); }
     
     .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; }
@@ -49,20 +64,20 @@
     
     .panel-glow { position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(124,58,237,0.1), transparent 70%); pointer-events: none; }
     
-    .panel-title { font-family: 'Unbounded', sans-serif; margin-top: 0; margin-bottom: 30px; font-size: 1.2rem; color: white; display: flex; align-items: center; gap: 10px; }
-    
+    .panel-title { font-family: 'Unbounded', sans-serif; margin-top: 0; margin-bottom: 30px; font-size: 1.2rem; color: var(--fg); display: flex; align-items: center; gap: 10px; }
+
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--fdd); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-    .form-group input, .form-group select { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--bd); color: white; border-radius: 8px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease; }
-    .form-group input:focus, .form-group select:focus { border-color: var(--pt); box-shadow: 0 0 10px rgba(124,58,237,0.1); background: rgba(0,0,0,0.5); }
-    
+    .form-group input, .form-group select { width: 100%; padding: 14px; background: var(--well-bg); border: 1px solid var(--bd); color: var(--fg); border-radius: 8px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--pt); box-shadow: 0 0 10px rgba(124,58,237,0.1); background: var(--well-bg-strong); }
+
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
     th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--bd); }
     th { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--fdd); text-transform: uppercase; letter-spacing: 1px; }
-    td { color: #eaeaea; }
-    tr:hover td { background: rgba(255,255,255,0.02); }
-    
-    .format-section { display: none; margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px dashed var(--bd); }
+    td { color: var(--fg); }
+    tr:hover td { background: var(--surface-subtle); }
+
+    .format-section { display: none; margin-top: 20px; padding: 20px; background: var(--well-bg); border-radius: 8px; border: 1px dashed var(--bd); }
     .format-section.active { display: block; }
     
     .btn-small { padding: 8px 14px; font-size: 0.75rem; border-radius: 6px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
@@ -76,7 +91,7 @@
 
     /* AI Bot UI Styles */
     .ai-chat-panel {
-      background: rgba(0, 0, 0, 0.4);
+      background: var(--well-bg);
       border: 1px solid var(--bd);
       border-radius: 12px;
       padding: 15px;
@@ -94,7 +109,7 @@
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: linear-gradient(45deg, var(--p), var(--pt));
+      background: linear-gradient(45deg, var(--purple-mid), var(--pt));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -104,18 +119,18 @@
       box-shadow: 0 0 10px rgba(124,58,237,0.3);
     }
     .ai-chat-bubble {
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--surface-subtle);
       border: 1px solid var(--bd);
       border-radius: 12px;
       border-top-left-radius: 4px;
       padding: 12px;
       font-size: 0.8rem;
       line-height: 1.5;
-      color: #eaeaea;
+      color: var(--fg);
     }
     .ai-prompt-box {
       margin-top: 15px;
-      background: rgba(0,0,0,0.5);
+      background: var(--well-bg-strong);
       border: 1px solid var(--bd);
       border-radius: 8px;
       padding: 12px;
@@ -124,7 +139,7 @@
       width: 100%;
       background: transparent;
       border: none;
-      color: white;
+      color: var(--fg);
       font-family: 'Inter', sans-serif;
       font-size: 0.8rem;
       resize: vertical;
@@ -158,12 +173,15 @@
 </head>
 <body>
 
+  <div id="cur"></div>
+
   <!-- Login Overlay -->
   <div id="login-overlay">
     <div class="login-box">
       <h2 style="font-family:'Unbounded',sans-serif; margin:0; font-size:2rem;">System <span style="color:var(--pt)">Auth</span></h2>
       <p style="color:var(--fdd); font-size:0.9rem; margin-top:10px; font-family:'Space Mono',monospace;">SECURE ADMIN GATEWAY</p>
-      <input type="password" id="admin-key" placeholder="••••••••••••" onkeypress="if(event.key==='Enter') login()">
+      <input type="text" id="admin-user" placeholder="Admin ID" autocomplete="username" onkeypress="if(event.key==='Enter') document.getElementById('admin-key').focus()">
+      <input type="password" id="admin-key" placeholder="••••••••••••" autocomplete="current-password" onkeypress="if(event.key==='Enter') login()">
       <button class="btn-main" style="width:100%; padding:15px; font-family:'Space Mono',monospace; font-size:0.9rem;" onclick="login()">INITIALIZE SESSION</button>
       <p id="login-error" style="color:var(--rt); font-size:0.8rem; display:none; margin-top:15px; font-family:'Space Mono',monospace;">[!] ACCESS DENIED</p>
     </div>
@@ -220,34 +238,51 @@
         <h3 class="panel-title">Deploy Resource</h3>
         <form id="solution-form" onsubmit="saveSolution(event)">
           <input type="hidden" id="edit-id" value="">
-          
+
           <div class="form-group">
-            <label>Title</label>
-            <input type="text" id="title" required placeholder="e.g. Advanced Calculus Guide">
+            <label>Title (Auto-Generated)</label>
+            <input type="text" id="title" readonly required placeholder="Fill in the fields below to generate a title" style="color:var(--fdd); cursor:not-allowed;">
           </div>
-          
+
+          <div class="form-group">
+            <label>Playlist</label>
+            <select id="playlistSelect" onchange="togglePlaylistInput()">
+              <option value="">-- No Playlist --</option>
+              <option value="__new__">+ Create New Playlist</option>
+            </select>
+            <input type="text" id="newPlaylistName" placeholder="e.g. NCERT Class 10 Full Course" style="display:none; margin-top:10px;" oninput="updateAutoTitle()">
+          </div>
+
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
             <div class="form-group">
-              <label>Board</label>
-              <input type="text" id="board" placeholder="e.g. CBSE">
+              <label>Std</label>
+              <select id="classLevel" required onchange="updateAutoTitle()">
+                <option value="">-- Select Std --</option>
+                <option value="5">Class 5</option>
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+              </select>
             </div>
-            <div class="form-group">
-              <label>Class / Level</label>
-              <input type="text" id="classLevel" placeholder="e.g. Class 12">
-            </div>
-          </div>
-          
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
             <div class="form-group">
               <label>Subject</label>
-              <input type="text" id="subject" required placeholder="e.g. Mathematics">
-            </div>
-            <div class="form-group">
-              <label>Chapter</label>
-              <input type="text" id="chapter" placeholder="e.g. Integration">
+              <input type="text" id="subject" required placeholder="e.g. Mathematics" oninput="updateAutoTitle()">
             </div>
           </div>
-          
+
+          <div style="display:grid; grid-template-columns:1fr 2fr; gap:15px;">
+            <div class="form-group">
+              <label>Chapter Number</label>
+              <input type="text" id="chapterNumber" placeholder="e.g. 3" oninput="updateAutoTitle()">
+            </div>
+            <div class="form-group">
+              <label>Chapter Name</label>
+              <input type="text" id="chapter" placeholder="e.g. Integration" oninput="updateAutoTitle()">
+            </div>
+          </div>
+
           <div class="form-group">
             <label>YouTube Asset (Optional)</label>
             <input type="url" id="youtubeLink" placeholder="https://youtube.com/...">
@@ -337,6 +372,7 @@
             <thead>
               <tr>
                 <th>Identifier (Title)</th>
+                <th>Playlist</th>
                 <th>Subject</th>
                 <th>Format</th>
                 <th>Operations</th>
@@ -353,47 +389,138 @@
   </div>
 
   <script>
+    let adminUser = localStorage.getItem('classconnect_admin_user') || '';
     let adminKey = localStorage.getItem('classconnect_admin_key') || '';
     let solutionsData = [];
+    let playlistNames = [];
 
-    tinymce.init({
-      selector: '#htmlContent',
-      height: 450,
-      plugins: 'table lists link code',
-      toolbar: 'undo redo | bold italic | bullist numlist | code',
-      menubar: false,
-      skin: 'oxide-dark',
-      content_css: 'dark',
-      font_family_formats: 'Inter=Inter,sans-serif; Space Mono=Space Mono,monospace;',
-      content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; background: #0a0a0f; color: #fff; }'
-    });
+    // main.js applies the saved theme, but it loads at the end of the page — apply it
+    // here first so TinyMCE picks the right skin on its very first init below.
+    const savedThemeForEditor = localStorage.getItem('classconnect-theme');
+    if (savedThemeForEditor) document.documentElement.setAttribute('data-theme', savedThemeForEditor);
 
-    if (adminKey) {
+    // TinyMCE's skin/content CSS are separate stylesheets, not CSS variables, so they
+    // can't just follow the page theme automatically — read the current theme and pick
+    // the matching TinyMCE skin whenever the editor is (re)initialized.
+    function getEditorThemeConfig() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      return isLight
+        ? {
+            skin: 'oxide',
+            content_css: 'default',
+            content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; background: #ffffff; color: #0C0C0C; }'
+          }
+        : {
+            skin: 'oxide-dark',
+            content_css: 'dark',
+            content_style: 'body { font-family: Inter, sans-serif; font-size: 14px; background: #0a0a0f; color: #fff; }'
+          };
+    }
+
+    function initEditor(initialContent = '') {
+      tinymce.init({
+        selector: '#htmlContent',
+        height: 450,
+        plugins: 'table lists link code',
+        toolbar: 'undo redo | bold italic | bullist numlist | code',
+        menubar: false,
+        font_family_formats: 'Inter=Inter,sans-serif; Space Mono=Space Mono,monospace;',
+        ...getEditorThemeConfig(),
+        setup: (editor) => {
+          editor.on('init', () => { if (initialContent) editor.setContent(initialContent); });
+        }
+      });
+    }
+    initEditor();
+
+    // Reinitialize the editor (preserving its current content) whenever the page theme
+    // changes, so the canvas doesn't stay stuck in dark mode after switching to light.
+    new MutationObserver(() => {
+      const editor = tinymce.get('htmlContent');
+      const content = editor ? editor.getContent() : '';
+      if (editor) tinymce.remove('#htmlContent');
+      initEditor(content);
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    if (adminUser && adminKey) {
+      document.getElementById('admin-user').value = adminUser;
       document.getElementById('admin-key').value = adminKey;
       login(true);
     }
 
     async function login(auto = false) {
       if (!auto) {
+        adminUser = document.getElementById('admin-user').value;
         adminKey = document.getElementById('admin-key').value;
       }
       try {
         const res = await fetch('/api/admin/solutions', {
-          headers: { 'x-admin-key': adminKey }
+          headers: { 'x-admin-user': adminUser, 'x-admin-key': adminKey }
         });
         if (res.ok) {
+          localStorage.setItem('classconnect_admin_user', adminUser);
           localStorage.setItem('classconnect_admin_key', adminKey);
           document.getElementById('login-overlay').style.display = 'none';
           const data = await res.json();
           solutionsData = data.data;
           renderTable();
+          fetchPlaylists();
         } else {
           if (!auto) document.getElementById('login-error').style.display = 'block';
+          localStorage.removeItem('classconnect_admin_user');
           localStorage.removeItem('classconnect_admin_key');
         }
       } catch (err) {
         console.error(err);
       }
+    }
+
+    async function fetchPlaylists() {
+      try {
+        const res = await fetch('/api/admin/playlists', {
+          headers: { 'x-admin-user': adminUser, 'x-admin-key': adminKey }
+        });
+        const data = await res.json();
+        if (data.success) {
+          playlistNames = data.data;
+          populatePlaylistOptions(playlistNames);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function populatePlaylistOptions(names, selected = '') {
+      const select = document.getElementById('playlistSelect');
+      const current = selected || (select.value !== '__new__' ? select.value : '');
+      const allNames = current && !names.includes(current) ? [...names, current] : names;
+      select.innerHTML = '<option value="">-- No Playlist --</option>' +
+        allNames.map(name => `<option value="${escapeHtmlAttr(name)}">${escapeHtmlAttr(name)}</option>`).join('') +
+        '<option value="__new__">+ Create New Playlist</option>';
+      if (current) select.value = current;
+    }
+
+    function escapeHtmlAttr(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function togglePlaylistInput() {
+      const select = document.getElementById('playlistSelect');
+      const newInput = document.getElementById('newPlaylistName');
+      const isNew = select.value === '__new__';
+      newInput.style.display = isNew ? 'block' : 'none';
+      if (!isNew) newInput.value = '';
+      updateAutoTitle();
+    }
+
+    function updateAutoTitle() {
+      const chapterNumber = document.getElementById('chapterNumber').value.trim();
+      const chapterName = document.getElementById('chapter').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const classLevel = document.getElementById('classLevel').value.trim();
+      const std = classLevel ? `Class ${classLevel}` : '';
+      const parts = [chapterNumber, chapterName, subject, std].filter(Boolean);
+      document.getElementById('title').value = parts.join(' - ');
     }
 
     async function generateWithAI() {
@@ -418,9 +545,10 @@
       try {
         const res = await fetch('/api/admin/generate-solution', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
-            'x-admin-key': adminKey 
+            'x-admin-user': adminUser,
+            'x-admin-key': adminKey
           },
           body: JSON.stringify({ prompt: fullPrompt })
         });
@@ -453,9 +581,10 @@
       solutionsData.forEach(sol => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td style="font-weight:500; font-family:'Inter',sans-serif;">${sol.title}</td>
-          <td>${sol.subject}</td>
-          <td><span style="font-family:'Space Mono',monospace; font-size:0.65rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:4px 8px; border-radius:12px;">${sol.formatType}</span></td>
+          <td style="font-weight:500; font-family:'Inter',sans-serif;">${escapeHtmlAttr(sol.title)}</td>
+          <td>${sol.playlist ? escapeHtmlAttr(sol.playlist) : '<span style="color:var(--fdd)">—</span>'}</td>
+          <td>${escapeHtmlAttr(sol.subject)}</td>
+          <td><span style="font-family:'Space Mono',monospace; font-size:0.65rem; background:var(--surface-subtle); border:1px solid var(--bd); padding:4px 8px; border-radius:12px;">${escapeHtmlAttr(sol.formatType)}</span></td>
           <td style="white-space:nowrap;">
             <button class="btn-small btn-edit" onclick="editSolution('${sol._id}')">EDIT</button>
             <button class="btn-small btn-delete" onclick="deleteSolution('${sol._id}')">DEL</button>
@@ -470,13 +599,15 @@
       if (!sol) return;
 
       document.getElementById('edit-id').value = sol._id;
-      document.getElementById('title').value = sol.title;
-      document.getElementById('board').value = sol.board || '';
       document.getElementById('classLevel').value = sol.classLevel || '';
-      document.getElementById('subject').value = sol.subject;
+      document.getElementById('subject').value = sol.subject || '';
+      document.getElementById('chapterNumber').value = sol.chapterNumber || '';
       document.getElementById('chapter').value = sol.chapter || '';
       document.getElementById('youtubeLink').value = sol.youtubeLink || '';
-      
+
+      populatePlaylistOptions(playlistNames, sol.playlist || '');
+      togglePlaylistInput();
+
       document.getElementById('formatType').value = sol.formatType;
       toggleFormatSection();
 
@@ -501,7 +632,9 @@
       document.getElementById('submit-btn').innerText = 'EXECUTE DEPLOYMENT';
       document.getElementById('cancel-btn').style.display = 'none';
       document.getElementById('current-pdf-label').style.display = 'none';
+      document.getElementById('newPlaylistName').style.display = 'none';
       tinymce.get('htmlContent').setContent('');
+      updateAutoTitle();
       toggleFormatSection();
     }
 
@@ -509,14 +642,20 @@
       e.preventDefault();
       const id = document.getElementById('edit-id').value;
       const formData = new FormData();
-      
+
+      const playlistSelect = document.getElementById('playlistSelect').value;
+      const playlist = playlistSelect === '__new__'
+        ? document.getElementById('newPlaylistName').value.trim()
+        : playlistSelect;
+
       formData.append('title', document.getElementById('title').value);
-      formData.append('board', document.getElementById('board').value);
+      formData.append('playlist', playlist);
       formData.append('classLevel', document.getElementById('classLevel').value);
       formData.append('subject', document.getElementById('subject').value);
+      formData.append('chapterNumber', document.getElementById('chapterNumber').value);
       formData.append('chapter', document.getElementById('chapter').value);
       formData.append('youtubeLink', document.getElementById('youtubeLink').value);
-      
+
       const formatType = document.getElementById('formatType').value;
       formData.append('formatType', formatType);
 
@@ -529,9 +668,19 @@
           return;
         }
       } else if (formatType === 'DriveLink') {
-        formData.append('driveLink', document.getElementById('driveLink').value);
+        const driveLink = document.getElementById('driveLink').value.trim();
+        if (!driveLink) {
+          alert('Drive URL is required for this deployment format.');
+          return;
+        }
+        formData.append('driveLink', driveLink);
       } else if (formatType === 'HTML') {
-        formData.append('htmlContent', tinymce.get('htmlContent').getContent());
+        const htmlContent = tinymce.get('htmlContent').getContent();
+        if (!htmlContent.trim()) {
+          alert('Document canvas is empty — write or generate content before deploying.');
+          return;
+        }
+        formData.append('htmlContent', htmlContent);
       }
 
       const url = id ? `/api/admin/solutions/${id}` : '/api/admin/solutions';
@@ -543,7 +692,7 @@
       try {
         const res = await fetch(url, {
           method: method,
-          headers: { 'x-admin-key': adminKey },
+          headers: { 'x-admin-user': adminUser, 'x-admin-key': adminKey },
           body: formData
         });
         const data = await res.json();
@@ -565,7 +714,7 @@
       try {
         const res = await fetch(`/api/admin/solutions/${id}`, {
           method: 'DELETE',
-          headers: { 'x-admin-key': adminKey }
+          headers: { 'x-admin-user': adminUser, 'x-admin-key': adminKey }
         });
         const data = await res.json();
         if (data.success) {

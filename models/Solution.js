@@ -3,10 +3,13 @@ const mongoose = require('mongoose');
 const solutionSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
+    slug: { type: String, trim: true, unique: true, sparse: true }, // URL-safe identifier for the public /solutions/:slug page
+    playlist: { type: String, trim: true }, // groups chapters into a course/playlist
     board: { type: String, trim: true }, // e.g., CBSE, ICSE, State Board
     classLevel: { type: String, trim: true }, // e.g., 10, 11, 12
     subject: { type: String, required: true, trim: true },
-    chapter: { type: String, trim: true },
+    chapterNumber: { type: String, trim: true },
+    chapter: { type: String, trim: true }, // chapter name
     youtubeLink: { type: String, trim: true },
     
     // Format Type
@@ -30,6 +33,7 @@ const solutionSchema = new mongoose.Schema(
 // Indexes for faster searching on the frontend
 // Compound index matches the actual public query shape (isActive + optional filters)
 solutionSchema.index({ isActive: 1, board: 1, classLevel: 1, subject: 1 });
+solutionSchema.index({ playlist: 1 });
 solutionSchema.index({ createdAt: -1 });
 solutionSchema.index({ title: 'text' });
 

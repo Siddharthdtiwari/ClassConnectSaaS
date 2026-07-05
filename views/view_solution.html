@@ -3,12 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View Solution - ClassConnect</title>
-  
+  <title>__PAGE_TITLE__</title>
+  <meta name="description" content="__PAGE_DESCRIPTION__">
+  <link rel="canonical" href="__CANONICAL_URL__">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="__PAGE_TITLE__">
+  <meta property="og:description" content="__PAGE_DESCRIPTION__">
+  <meta property="og:url" content="__CANONICAL_URL__">
+
+  __JSONLD_SCRIPT__
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  
+
   <style>
     :root {
       --pt: #7c3aed;
@@ -216,9 +225,11 @@
     }
 
     async function loadSolution() {
+      // Slug URLs (/solutions/:slug) have the server inject the resolved ID directly,
+      // avoiding a redundant lookup; the older ?id= query param still works standalone.
       const urlParams = new URLSearchParams(window.location.search);
-      const id = urlParams.get('id');
-      
+      const id = (typeof window.__SOLUTION_ID__ === 'string' && window.__SOLUTION_ID__) || urlParams.get('id');
+
       if (!id) return showError();
 
       try {
