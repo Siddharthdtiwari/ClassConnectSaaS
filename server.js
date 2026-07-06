@@ -156,7 +156,11 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-const VIEW_SOLUTION_TEMPLATE_PATH = path.join(__dirname, 'views', 'view_solution.html');
+// The React (Vite) build output — Express serves this shell for every page route and
+// injects per-solution SEO meta into it for /solutions/:slug, so crawlers see real
+// titles/descriptions/JSON-LD even though the UI is a client-rendered React app.
+const CLIENT_INDEX_PATH = path.join(__dirname, 'client', 'dist', 'index.html');
+const CLIENT_DIST_DIR = path.join(__dirname, 'client', 'dist');
 
 // Builds a short, human-readable meta description for a solution's page.
 function buildSolutionDescription(sol) {
@@ -171,56 +175,49 @@ function buildSolutionDescription(sol) {
     : `Free textbook solution for ${sol.title}, available instantly on ClassConnect.`;
 }
 
-// Server-renders the view_solution template with real title/description/OG/JSON-LD for a
-// specific solution (or generic fallback content when none is found).
-async function renderSolutionPage(res, solution) {
-  const template = await fs.promises.readFile(VIEW_SOLUTION_TEMPLATE_PATH, 'utf8');
-  let title, description, canonicalUrl, jsonLdScript, solutionIdScript;
+// Sends the React shell; when a solution is provided, its title/description/canonical/OG
+// tags replace the shell's defaults and JSON-LD + the resolved id are injected.
+async function renderAppShell(res, solution) {
+  let html = await fs.promises.readFile(CLIENT_INDEX_PATH, 'utf8');
 
   if (solution) {
-    title = `${solution.title} - ClassConnect Solutions`;
-    description = buildSolutionDescription(solution);
-    canonicalUrl = `${SITE_URL}/solutions/${solution.slug}`;
+    const title = escapeHtml(`${solution.title} - ClassConnect Solutions`);
+    const description = escapeHtml(buildSolutionDescription(solution));
+    const canonicalUrl = escapeHtml(`${SITE_URL}/solutions/${solution.slug}`);
     const jsonLd = {
       '@context': 'https://schema.org',
       '@type': 'LearningResource',
       name: solution.title,
-      description,
-      url: canonicalUrl,
+      description: buildSolutionDescription(solution),
+      url: `${SITE_URL}/solutions/${solution.slug}`,
       learningResourceType: 'Solution',
       ...(solution.subject ? { about: solution.subject } : {}),
       ...(solution.classLevel ? { educationalLevel: `Class ${solution.classLevel}` } : {}),
       isAccessibleForFree: true,
       provider: { '@type': 'Organization', name: 'ClassConnect', url: SITE_URL }
     };
-    jsonLdScript = `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`;
-    solutionIdScript = `<script>window.__SOLUTION_ID__ = ${JSON.stringify(solution._id.toString())};</script>`;
-  } else {
-    title = 'View Solution - ClassConnect';
-    description = 'Access world-class, verified textbook solutions instantly on ClassConnect.';
-    canonicalUrl = `${SITE_URL}/solutions`;
-    jsonLdScript = '';
-    solutionIdScript = '';
+    html = html
+      .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
+      .replace(/<meta name="description" content="[^"]*"/, `<meta name="description" content="${description}"`)
+      .replace(/<link rel="canonical" href="[^"]*"/, `<link rel="canonical" href="${canonicalUrl}"`)
+      .replace(/<meta property="og:title" content="[^"]*"/, `<meta property="og:title" content="${title}"`)
+      .replace(/<meta property="og:description" content="[^"]*"/, `<meta property="og:description" content="${description}"`)
+      .replace(/<meta property="og:url" content="[^"]*"/, `<meta property="og:url" content="${canonicalUrl}"`)
+      .replace('</head>', `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n<script>window.__SOLUTION_ID__ = ${JSON.stringify(solution._id.toString())};</script>\n</head>`);
   }
 
-  const html = template
-    .replaceAll('__PAGE_TITLE__', escapeHtml(title))
-    .replaceAll('__PAGE_DESCRIPTION__', escapeHtml(description))
-    .replaceAll('__CANONICAL_URL__', escapeHtml(canonicalUrl))
-    .replace('__JSONLD_SCRIPT__', jsonLdScript)
-    .replace('</head>', `${solutionIdScript}\n</head>`);
-
-  res.type('html').send(html);
+  res.type('html').setHeader('Cache-Control', 'no-cache');
+  res.send(html);
 }
 
 // Canonical, crawlable solution detail page.
 app.get('/solutions/:slug', async (req, res) => {
   try {
     const solution = await Solution.findOne({ slug: req.params.slug, isActive: true });
-    await renderSolutionPage(res, solution || null);
+    await renderAppShell(res, solution || null);
   } catch (err) {
     console.error('Render solution page error:', err.message);
-    await renderSolutionPage(res, null);
+    await renderAppShell(res, null);
   }
 });
 
@@ -233,7 +230,7 @@ app.get('/view_solution', async (req, res) => {
   } catch (err) {
     // Malformed/missing id — fall through to the generic page below.
   }
-  renderSolutionPage(res, null);
+  renderAppShell(res, null);
 });
 
 // Dynamic sitemap — includes every active solution so search engines can discover and
@@ -263,13 +260,14 @@ ${u.lastmod ? `    <lastmod>${u.lastmod}</lastmod>\n` : ''}    <changefreq>${u.c
   }
 });
 
-// Serve static files from the 'public' directory with .html extension fallback.
-// Assets get a day of browser caching (they only change on deploys); HTML stays
-// no-cache so page updates show up immediately.
-app.use(express.static(path.join(__dirname, 'public'), {
-  extensions: ['html'],
+// Serve the built React app's static files. Vite emits content-hashed filenames under
+// /assets, so those can be cached aggressively; everything else gets a day.
+app.use(express.static(CLIENT_DIST_DIR, {
+  index: false, // the shell is served by the routes below (with meta injection)
   setHeaders: (res, filePath) => {
-    if (/\.(css|js|svg|png|ico|jpg|jpeg|webp|woff2?)$/i.test(filePath)) {
+    if (/[-.][0-9a-f]{8,}\.(css|js)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (/\.(css|js|svg|png|ico|jpg|jpeg|webp|woff2?)$/i.test(filePath)) {
       res.setHeader('Cache-Control', 'public, max-age=86400');
     } else {
       res.setHeader('Cache-Control', 'no-cache');
@@ -625,6 +623,19 @@ app.get('/api/solutions/filters', globalApiLimiter, async (req, res) => {
   }
 });
 
+// Lookup by URL slug — used by the React viewer when navigating client-side to
+// /solutions/:slug (no server-injected id available on soft navigations).
+app.get('/api/solutions/slug/:slug', globalApiLimiter, async (req, res) => {
+  try {
+    const solution = await Solution.findOne({ slug: req.params.slug, isActive: true });
+    if (!solution) return res.status(404).json({ success: false, message: 'Not found' });
+    res.json({ success: true, data: solution });
+  } catch (err) {
+    console.error('Fetch solution by slug error:', err.message);
+    res.status(404).json({ success: false, message: 'Not found' });
+  }
+});
+
 app.get('/api/solutions/:id', globalApiLimiter, async (req, res) => {
   try {
     const solution = await Solution.findById(req.params.id);
@@ -780,12 +791,14 @@ ${prompt}
   }
 });
 
-// Fallback for unmatched routes (static files/pages are already handled above by
-// express.static). Real 404 status so search engines and clients don't treat
-// unknown URLs as valid pages.
+// SPA fallback — every non-API, non-static route serves the React shell and the
+// client-side router takes it from there (/, /solutions, /admin, unknown paths).
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/')) return next();
-  res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
+  renderAppShell(res, null).catch(err => {
+    console.error('Shell render error:', err.message);
+    res.status(500).send('Application unavailable');
+  });
 });
 
 // Central error handler — catches multer (file-too-large/wrong-type) and other
