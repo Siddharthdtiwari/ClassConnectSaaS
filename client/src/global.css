@@ -76,6 +76,7 @@ body {
   color: var(--fg);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  min-height: 100vh;
   transition: var(--transition);
 }
 
